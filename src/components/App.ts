@@ -1,5 +1,6 @@
 import ImageComponent from "./page/item/Image.js";
 import Note from "./page/item/Note.js";
+import Todo from "./page/item/Todo.js";
 import VideoComponent from "./page/item/Video.js";
 import PageComponent from "./page/Page.js";
 
@@ -24,5 +25,8 @@ export default class App {
 
     const $note = new Note("메모", "메모 내용");
     $note.attachTo(appRoot, "beforeend");
+
+    const $todo = new Todo("todo", "todolist");
+    $todo.attachTo(appRoot, "beforeend");
   }
 }
