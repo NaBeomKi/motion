@@ -1,4 +1,5 @@
 import ImageComponent from "./page/item/Image.js";
+import VideoComponent from "./page/item/Video.js";
 import PageComponent from "./page/Page.js";
 
 export default class App {
@@ -13,5 +14,11 @@ export default class App {
       "https://picsum.photos/600/300"
     );
     $image.attachTo(appRoot, "beforeend");
+
+    const $video = new VideoComponent(
+      "박막례 할머니",
+      "https://www.youtube.com/embed/2wtCTASDu1M"
+    );
+    $video.attachTo(appRoot, "beforeend");
   }
 }
