@@ -4,6 +4,7 @@ export default class VideoComponent extends BaseComponent<HTMLElement> {
   constructor(title: string, url: string) {
     super(`
     <section class="video">
+      <div class="video__player">
         <iframe
         width="560"
         height="315"
@@ -11,16 +12,17 @@ export default class VideoComponent extends BaseComponent<HTMLElement> {
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
-        class="video_thumnail"
+        class="video__iframe"
         ></iframe>
-        <p class="video__title"></p>
+      </div>
+      <h3 class="video__title"></h3>
     </section>
     `);
 
-    const $video = this.$element.querySelector(
-      ".video_thumnail"
+    const $iframe = this.$element.querySelector(
+      ".video__iframe"
     )! as HTMLIFrameElement;
-    $video.src = url;
+    $iframe.src = url;
 
     const $title = this.$element.querySelector(
       ".video__title"
