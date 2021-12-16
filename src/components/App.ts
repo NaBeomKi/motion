@@ -3,13 +3,13 @@ import ImageComponent from "./page/item/Image.js";
 import Note from "./page/item/Note.js";
 import Todo from "./page/item/Todo.js";
 import VideoComponent from "./page/item/Video.js";
-import PageComponent, { Composable } from "./page/Page.js";
+import PageComponent, { Composable, PageItemComponent } from "./page/Page.js";
 
 export default class App {
   private readonly page: Component & Composable;
 
   constructor(appRoot: HTMLElement) {
-    this.page = new PageComponent();
+    this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
 
     const $image = new ImageComponent(
