@@ -6,8 +6,16 @@ export interface Composable {
 
 type OnCloseListener = () => void;
 
+type DragState = "start" | "stop" | "enter" | "leave";
+
+type OnDragStateListener<T extends Component> = (
+  target: T,
+  state: DragState
+) => void;
+
 interface SectionContainer extends Component, Composable {
   setOnCloseListener(listener: OnCloseListener): void;
+  setOnDragStateListener(listener: OnDragStateListener<SectionContainer>): void;
 }
 
 type SectionContainerConstructor = {
@@ -19,6 +27,7 @@ export class PageItemComponent
   implements SectionContainer
 {
   private closeListener?: OnCloseListener;
+  private dragStateListener?: OnDragStateListener<PageItemComponent>;
 
   constructor() {
     super(`
@@ -44,14 +53,32 @@ export class PageItemComponent
     this.$element.addEventListener("dragend", (event: DragEvent) => {
       this.onDragEnd(event);
     });
+    this.$element.addEventListener("dragenter", (event: DragEvent) => {
+      this.onDragEnter(event);
+    });
+    this.$element.addEventListener("dragleave", (event: DragEvent) => {
+      this.onDragLeave(event);
+    });
   }
 
-  onDragStart(event: DragEvent) {
-    console.log("dragstart", event);
+  onDragStart(_: DragEvent) {
+    this.notifyDragObservers("start");
   }
 
-  onDragEnd(event: DragEvent) {
-    console.log("dragend", event);
+  onDragEnd(_: DragEvent) {
+    this.notifyDragObservers("stop");
+  }
+
+  onDragEnter(_: DragEvent) {
+    this.notifyDragObservers("enter");
+  }
+
+  onDragLeave(_: DragEvent) {
+    this.notifyDragObservers("leave");
+  }
+
+  notifyDragObservers(state: DragState) {
+    this.dragStateListener && this.dragStateListener(this, state);
   }
 
   addChild(child: Component) {
@@ -63,6 +90,10 @@ export class PageItemComponent
 
   setOnCloseListener(listener: OnCloseListener) {
     this.closeListener = listener;
+  }
+
+  setOnDragStateListener(listener: OnDragStateListener<PageItemComponent>) {
+    this.dragStateListener = listener;
   }
 }
 
@@ -83,11 +114,12 @@ export default class PageComponent
     });
   }
 
-  onDragOver(event: DragEvent) {
-    console.log("dragover", event);
+  onDragOver(_: DragEvent) {
+    console.log("dragover");
   }
-  onDrop(event: DragEvent) {
-    console.log("drop", event);
+
+  onDrop(_: DragEvent) {
+    console.log("drop");
   }
 
   addChild(section: Component) {
@@ -97,5 +129,10 @@ export default class PageComponent
     item.setOnCloseListener(() => {
       item.removeFrom(this.$element);
     });
+    item.setOnDragStateListener(
+      (target: SectionContainer, state: DragState) => {
+        console.log(target, state);
+      }
+    );
   }
 }
