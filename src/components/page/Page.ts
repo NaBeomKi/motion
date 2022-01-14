@@ -17,6 +17,7 @@ interface SectionContainer extends Component, Composable {
   setOnCloseListener(listener: OnCloseListener): void;
   setOnDragStateListener(listener: OnDragStateListener<SectionContainer>): void;
   muteChildren(state: "mute" | "unmute"): void;
+  getBoundingRect(): DOMRect;
 }
 
 type SectionContainerConstructor = {
@@ -97,12 +98,16 @@ export class PageItemComponent
     this.dragStateListener = listener;
   }
 
-  muteChildren(state: "mute" | "unmute") {
-    if ((state = "mute")) {
+  muteChildren(_state: "mute" | "unmute") {
+    if ((_state = "mute")) {
       this.$element.classList.add("mute-children");
     } else {
       this.$element.classList.remove("mute-children");
     }
+  }
+
+  getBoundingRect() {
+    return this.$element.getBoundingClientRect();
   }
 }
 
@@ -131,14 +136,19 @@ export default class PageComponent
     console.log("dragover");
   }
 
-  onDrop(_: DragEvent) {
+  onDrop(event: DragEvent) {
     console.log("drop");
     if (!this.$dropTarget) {
       return;
     }
     if (this.$dragTarget && this.$dragTarget !== this.$dropTarget) {
+      const dropY = event.clientY;
+      const srcElement = this.$dragTarget.getBoundingRect();
       this.$dragTarget.removeFrom(this.$element);
-      this.$dropTarget.attach(this.$dragTarget, "beforebegin");
+      this.$dropTarget.attach(
+        this.$dragTarget,
+        dropY < srcElement.y ? "beforebegin" : "afterend"
+      );
     }
   }
 
